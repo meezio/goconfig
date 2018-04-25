@@ -8,9 +8,10 @@ import (
 	"fmt"
 	"path"
 
+	"path/filepath"
+
 	"github.com/crgimenes/goconfig/goenv"
 	"github.com/crgimenes/goconfig/goflags"
-	"path/filepath"
 )
 
 // Tag to set main name of field
@@ -43,10 +44,9 @@ var ErrFileFormatNotDefined = errors.New("file format not defined")
 //Usage is a function to show the help, can be replaced by your own version.
 var Usage func()
 
-// Fileformat struct holds the functions to Load and Save the file containing the settings
+// Fileformat struct holds the functions to Load the file containing the settings
 type Fileformat struct {
 	Extension   string
-	Save        func(config interface{}) (err error)
 	Load        func(config interface{}) (err error)
 	PrepareHelp func(config interface{}) (help string, err error)
 }

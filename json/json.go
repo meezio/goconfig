@@ -2,17 +2,16 @@ package json
 
 import (
 	"encoding/json"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 
 	"github.com/crgimenes/goconfig"
+	"github.com/crgimenes/goconfig/helper"
 )
 
 func init() {
 	f := goconfig.Fileformat{
 		Extension:   ".json",
-		Save:        SaveJSON,
 		Load:        LoadJSON,
 		PrepareHelp: PrepareHelp,
 	}
@@ -23,13 +22,13 @@ func init() {
 func LoadJSON(config interface{}) (err error) {
 	configFile := filepath.Join(goconfig.Path, goconfig.File)
 	file, err := os.Open(configFile)
-	if os.IsNotExist(err) && !goconfig.FileRequired {
-		err = nil
-		return
-	} else if err != nil {
+	if err != nil {
+		if os.IsNotExist(err) && !goconfig.FileRequired {
+			err = nil
+		}
 		return
 	}
-	defer file.Close()
+	defer helper.Closer(file)
 
 	decoder := json.NewDecoder(file)
 	err = decoder.Decode(&config)
@@ -37,37 +36,6 @@ func LoadJSON(config interface{}) (err error) {
 		return
 	}
 
-	return
-}
-
-// SaveJSON config file
-func SaveJSON(config interface{}) (err error) {
-	_, err = os.Stat(goconfig.Path)
-	if os.IsNotExist(err) {
-		err = os.Mkdir(goconfig.Path, os.ModePerm)
-		if err != nil {
-			return
-		}
-	} else if err != nil {
-		return
-	}
-
-	configFile := filepath.Join(goconfig.Path, goconfig.File)
-
-	_, err = os.Stat(configFile)
-	if err != nil {
-		return
-	}
-
-	b, err := json.MarshalIndent(config, "", "\t")
-	if err != nil {
-		return
-	}
-
-	err = ioutil.WriteFile(configFile, b, 0644)
-	if err != nil {
-		return
-	}
 	return
 }
 
