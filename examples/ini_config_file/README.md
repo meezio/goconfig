@@ -1,6 +1,7 @@
 
 ```bash
-> $ go run main.go -h                                                                                               [±master ●●▾]
+> $ go run main.go -h
+
 Usage
   -domain string
 		
