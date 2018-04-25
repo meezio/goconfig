@@ -12,7 +12,6 @@ import (
 func init() {
 	f := goconfig.Fileformat{
 		Extension:   ".toml",
-		Save:        SaveTOML,
 		Load:        LoadTOML,
 		PrepareHelp: PrepareHelp,
 	}
@@ -23,10 +22,10 @@ func init() {
 func LoadTOML(config interface{}) (err error) {
 	configFile := filepath.Join(goconfig.Path, goconfig.File)
 	_, err = os.Stat(configFile)
-	if os.IsNotExist(err) && !goconfig.FileRequired {
-		err = nil
-		return
-	} else if err != nil {
+	if err != nil {
+		if os.IsNotExist(err) && !goconfig.FileRequired {
+			err = nil
+		}
 		return
 	}
 	var tree *toml.Tree
@@ -35,32 +34,6 @@ func LoadTOML(config interface{}) (err error) {
 		return
 	}
 	err = tree.Unmarshal(config)
-	return
-}
-
-// SaveTOML config file
-func SaveTOML(config interface{}) (err error) {
-	_, err = os.Stat(goconfig.Path)
-	if os.IsNotExist(err) {
-		err = os.Mkdir(goconfig.Path, os.ModePerm)
-		if err != nil {
-			return
-		}
-	} else if err != nil {
-		return
-	}
-	configFile := filepath.Join(goconfig.Path, goconfig.File)
-	_, err = os.Stat(goconfig.Path)
-	if err != nil {
-		return
-	}
-	file, err := os.Create(configFile)
-	if err != nil {
-		return
-	}
-	defer file.Close()
-	cfg := reflect.ValueOf(config).Elem()
-	err = toml.NewEncoder(file).Encode(cfg)
 	return
 }
 

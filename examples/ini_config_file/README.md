@@ -25,17 +25,21 @@ Environment variables:
   $EXAMPLE_MONGODB_PORT int
 	 (default "999")
 
-Config file "./config.json":
-{
-    "Domain": "www.example.com",
-    "User": {
-        "Name": "",
-        "Password": ""
-    },
-    "MongoDB": {
-        "Host": "localhost",
-        "Port": 33
-    }
-}
+Config file "./config.ini":
+
+```ini
+debug = true
+Domain = example.com
+
+[user]
+name = ""
+passwd = ""
+
+[mongodb]
+host = myhost
+port = 909
+```
+
+
 exit status 2
 ```

@@ -1,29 +1,27 @@
-package yaml
+package ini
 
 import (
-	"io/ioutil"
+	"encoding/json"
 	"os"
 	"path/filepath"
 
 	"github.com/crgimenes/goconfig"
-	"gopkg.in/yaml.v2"
+	ini "gopkg.in/ini.v1"
 )
 
 func init() {
 	f := goconfig.Fileformat{
-		Extension:   ".yaml",
-		Load:        LoadYAML,
+		Extension:   ".ini",
+		Load:        LoadINI,
 		PrepareHelp: PrepareHelp,
 	}
 	goconfig.Formats = append(goconfig.Formats, f)
-	f.Extension = ".yml"
-	goconfig.Formats = append(goconfig.Formats, f)
 }
 
-// LoadYAML config file
-func LoadYAML(config interface{}) (err error) {
+// LoadINI config file
+func LoadINI(config interface{}) (err error) {
 	configFile := filepath.Join(goconfig.Path, goconfig.File)
-	file, err := ioutil.ReadFile(configFile)
+	file, err := os.Open(configFile)
 	if os.IsNotExist(err) && !goconfig.FileRequired {
 		err = nil
 		return
@@ -31,19 +29,14 @@ func LoadYAML(config interface{}) (err error) {
 		return
 	}
 
-	err = yaml.Unmarshal(file, config)
-
-	if err != nil {
-		return
-	}
-
+	err = ini.MapTo(config, file)
 	return
 }
 
 // PrepareHelp return help string for this file format.
 func PrepareHelp(config interface{}) (help string, err error) {
 	var helpAux []byte
-	helpAux, err = yaml.Marshal(&config)
+	helpAux, err = json.MarshalIndent(&config, "", "    ")
 	if err != nil {
 		return
 	}
