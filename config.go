@@ -12,6 +12,7 @@ import (
 
 	"github.com/crgimenes/goconfig/goenv"
 	"github.com/crgimenes/goconfig/goflags"
+	"github.com/crgimenes/goconfig/validate"
 )
 
 // Tag to set main name of field
@@ -107,6 +108,10 @@ func Parse(config interface{}) (err error) {
 	if err != nil {
 		return
 	}
+
+	validate.Prefix = PrefixFlag
+	validate.Setup(Tag, TagDefault)
+	err = validate.Parse(config)
 
 	return
 }
