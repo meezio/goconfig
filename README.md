@@ -28,7 +28,7 @@ it may or may not contain substructures.
 */
 
 type mongoDB struct {
-	Host string `cfgDefault:"example.com"`
+	Host string `cfgDefault:"example.com" crgRequired:"true"`
 	Port int    `cfgDefault:"999"`
 }
 
