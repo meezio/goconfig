@@ -25,7 +25,7 @@ type testSub struct {
 }
 type testSubSub struct {
 	A int    `cfg:"A" cfgDefault:"500"`
-	B string `cfg:"S" cfgDefault:"600"`
+	B string `cfg:"S" cfgDefault:"" cfgRequired:"true"`
 }
 
 func TestFindFileFormat(t *testing.T) {
@@ -106,6 +106,11 @@ func TestParse(t *testing.T) {
 	err = Parse(s)
 	if err != structtag.ErrUndefinedTag {
 		t.Fatal("Error structtag.ErrUndefinedTag expected")
+	}
+
+	err = os.Setenv("S_S_S", "TEST")
+	if err != nil {
+		t.Fatal(err)
 	}
 
 	Tag = "cfg"
