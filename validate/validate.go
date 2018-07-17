@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"reflect"
 	"strconv"
+	"strings"
 
 	"github.com/crgimenes/goconfig/structtag"
 )
@@ -89,7 +90,7 @@ func reflectString(field *reflect.StructField, value *reflect.Value, tag string)
 	req := field.Tag.Get("cfgRequired")
 	valueStr := getValue(value, "string")
 	if req == "true" && valueStr == "" {
-		err = fmt.Errorf("-%v is required", tag)
+		err = fmt.Errorf("-%v is required", strings.ToLower(tag))
 	}
 	return
 }
