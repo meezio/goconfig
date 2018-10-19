@@ -23,6 +23,9 @@ var Tag string
 // TagDefault set tag default
 var TagDefault string
 
+// TagDescription set tag default
+var TagDescription string
+
 // TagDisabled used to not process an input
 var TagDisabled string
 

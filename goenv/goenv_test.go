@@ -31,7 +31,7 @@ type testSubSub struct {
 
 func TestParse(t *testing.T) {
 
-	Setup("cfg", "cfgDefault")
+	Setup("cfg", "cfgDefault", "cfgDescription")
 
 	os.Setenv("A", "900")
 	os.Setenv("B", "TEST")

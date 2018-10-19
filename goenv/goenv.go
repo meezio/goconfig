@@ -18,13 +18,14 @@ var Prefix string
 var Usage func()
 
 // Setup maps and variables
-func Setup(tag string, tagDefault string) {
+func Setup(tag string, tagDefault string, tagDescription string) {
 	Usage = DefaultUsage
 
 	structtag.Setup()
 	structtag.Prefix = Prefix
 	SetTag(tag)
 	SetTagDefault(tagDefault)
+	SetTagDescription(tagDescription)
 
 	structtag.ParseMap[reflect.Int] = reflectInt
 	structtag.ParseMap[reflect.Float64] = reflectFloat
@@ -42,6 +43,11 @@ func SetTagDefault(tag string) {
 	structtag.TagDefault = tag
 }
 
+// SetTagDescription set a new TagDescription to return description
+func SetTagDescription(tag string) {
+	structtag.TagDescription = tag
+}
+
 // Parse configuration
 func Parse(config interface{}) (err error) {
 	err = structtag.Parse(config, "")
@@ -54,6 +60,7 @@ var PrintDefaultsOutput string
 func getNewValue(field *reflect.StructField, value *reflect.Value, tag string, datatype string) (ret string) {
 
 	defaultValue := field.Tag.Get(structtag.TagDefault)
+	description := field.Tag.Get(structtag.TagDescription)
 
 	// create PrintDefaults output
 	tag = strings.ToUpper(tag)
@@ -62,11 +69,12 @@ func getNewValue(field *reflect.StructField, value *reflect.Value, tag string, d
 		sysvar = `%` + tag + `%`
 	}
 
-	if defaultValue == "" {
-		PrintDefaultsOutput += ` ` + sysvar + ` ` + datatype + "\n\n"
-	} else {
-		printDV := " (default \"" + defaultValue + "\")"
-		PrintDefaultsOutput += `  ` + sysvar + ` ` + datatype + "\n\t" + printDV + "\n"
+	PrintDefaultsOutput += `  ` + sysvar + ` ` + datatype + "\n"
+	if description != "" {
+		PrintDefaultsOutput += "    \t" + description + "\n"
+	}
+	if defaultValue != "" {
+		PrintDefaultsOutput += "    \t(default \"" + defaultValue + "\")\n"
 	}
 
 	// get value from environment variable

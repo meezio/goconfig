@@ -34,7 +34,7 @@ func TestParse(t *testing.T) {
 	//os.Args = []string{"noop", "-flag1=val1", "arg1", "arg2"}
 	//os.Args = []string{"program", "-h"}
 
-	Setup("flag", "flagDefault")
+	Setup("flag", "flagDefault", "flagDescription")
 
 	os.Args = []string{
 		"program",

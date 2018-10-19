@@ -32,7 +32,7 @@ var Prefix string
 var Usage func()
 
 // Setup maps and variables
-func Setup(tag string, tagDefault string) {
+func Setup(tag string, tagDefault string, tagDescription string) {
 	Usage = DefaultUsage
 	parametersMetaMap = make(map[*reflect.Value]parameterMeta)
 	visitedMap = make(map[string]*flag.Flag)
@@ -41,6 +41,7 @@ func Setup(tag string, tagDefault string) {
 	structtag.Prefix = Prefix
 	SetTag(tag)
 	SetTagDefault(tagDefault)
+	SetTagDescription(tagDescription)
 
 	structtag.ParseMap[reflect.Int] = reflectInt
 	structtag.ParseMap[reflect.Float64] = reflectFloat
@@ -56,6 +57,11 @@ func SetTag(tag string) {
 // SetTagDefault set a new TagDefault to retorn default values
 func SetTagDefault(tag string) {
 	structtag.TagDefault = tag
+}
+
+// SetTagDescription set a new TagDescription to return description
+func SetTagDescription(tag string) {
+	structtag.TagDescription = tag
 }
 
 // Parse configuration
@@ -106,7 +112,7 @@ func Reset() {
 	flag.Usage = nil
 
 	structtag.Reset()
-	Setup(structtag.Tag, structtag.TagDefault)
+	Setup(structtag.Tag, structtag.TagDefault, structtag.TagDescription)
 }
 
 func loadVisit(f *flag.Flag) {
@@ -115,7 +121,7 @@ func loadVisit(f *flag.Flag) {
 
 func reflectInt(field *reflect.StructField, value *reflect.Value, tag string) (err error) {
 	var aux int
-	var defaltValue string
+	var defaltValue, description string
 	var defaltValueInt int
 
 	defaltValue = field.Tag.Get(structtag.TagDefault)
@@ -128,6 +134,7 @@ func reflectInt(field *reflect.StructField, value *reflect.Value, tag string) (e
 			return
 		}
 	}
+	description = field.Tag.Get(structtag.TagDescription)
 
 	meta := parameterMeta{}
 	meta.Value = &aux
@@ -135,7 +142,7 @@ func reflectInt(field *reflect.StructField, value *reflect.Value, tag string) (e
 	meta.Kind = reflect.Int
 	parametersMetaMap[value] = meta
 
-	flag.IntVar(&aux, meta.Tag, defaltValueInt, "")
+	flag.IntVar(&aux, meta.Tag, defaltValueInt, description)
 
 	//fmt.Println(tag, defaltValue)
 
@@ -144,7 +151,7 @@ func reflectInt(field *reflect.StructField, value *reflect.Value, tag string) (e
 
 func reflectFloat(field *reflect.StructField, value *reflect.Value, tag string) (err error) {
 	var aux float64
-	var defaltValue string
+	var defaltValue, description string
 	var defaltValueFloat float64
 
 	defaltValue = field.Tag.Get(structtag.TagDefault)
@@ -157,6 +164,7 @@ func reflectFloat(field *reflect.StructField, value *reflect.Value, tag string) 
 			return
 		}
 	}
+	description = field.Tag.Get(structtag.TagDescription)
 
 	meta := parameterMeta{}
 	meta.Value = &aux
@@ -164,15 +172,16 @@ func reflectFloat(field *reflect.StructField, value *reflect.Value, tag string) 
 	meta.Kind = reflect.Float64
 	parametersMetaMap[value] = meta
 
-	flag.Float64Var(&aux, meta.Tag, defaltValueFloat, "")
+	flag.Float64Var(&aux, meta.Tag, defaltValueFloat, description)
 
 	return
 }
 
 func reflectString(field *reflect.StructField, value *reflect.Value, tag string) (err error) {
 
-	var aux, defaltValue string
+	var aux, defaltValue, description string
 	defaltValue = field.Tag.Get(structtag.TagDefault)
+	description = field.Tag.Get(structtag.TagDescription)
 
 	meta := parameterMeta{}
 	meta.Value = &aux
@@ -180,7 +189,7 @@ func reflectString(field *reflect.StructField, value *reflect.Value, tag string)
 	meta.Kind = reflect.String
 	parametersMetaMap[value] = meta
 
-	flag.StringVar(&aux, meta.Tag, defaltValue, "")
+	flag.StringVar(&aux, meta.Tag, defaltValue, description)
 
 	//fmt.Println(tag, defaltValue)
 
@@ -190,9 +199,11 @@ func reflectString(field *reflect.StructField, value *reflect.Value, tag string)
 func reflectBool(field *reflect.StructField, value *reflect.Value, tag string) (err error) {
 
 	var aux bool
+	var description string
 	var defaltValue bool
 	defaltTag := field.Tag.Get(structtag.TagDefault)
 	defaltValue = defaltTag == "true" || defaltTag == "t"
+	description = field.Tag.Get(structtag.TagDescription)
 
 	meta := parameterMeta{}
 	meta.Value = &aux
@@ -200,7 +211,7 @@ func reflectBool(field *reflect.StructField, value *reflect.Value, tag string) (
 	meta.Kind = reflect.Bool
 	parametersMetaMap[value] = meta
 
-	flag.BoolVar(&aux, meta.Tag, defaltValue, "")
+	flag.BoolVar(&aux, meta.Tag, !defaltValue, description)
 
 	//fmt.Println(tag, defaltValue)
 

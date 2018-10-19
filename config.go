@@ -21,6 +21,9 @@ var Tag = "cfg"
 // TagDefault to set default value
 var TagDefault = "cfgDefault"
 
+// TagDescription to set default value
+var TagDescription = "cfgDescription"
+
 // Path sets default config path
 var Path string
 
@@ -94,14 +97,14 @@ func Parse(config interface{}) (err error) {
 	}
 
 	goenv.Prefix = PrefixEnv
-	goenv.Setup(Tag, TagDefault)
+	goenv.Setup(Tag, TagDefault, TagDescription)
 	err = goenv.Parse(config)
 	if err != nil {
 		return
 	}
 
 	goflags.Prefix = PrefixFlag
-	goflags.Setup(Tag, TagDefault)
+	goflags.Setup(Tag, TagDefault, TagDescription)
 	goflags.Usage = Usage
 	goflags.Preserve = true
 	err = goflags.Parse(config)
