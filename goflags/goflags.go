@@ -211,7 +211,7 @@ func reflectBool(field *reflect.StructField, value *reflect.Value, tag string) (
 	meta.Kind = reflect.Bool
 	parametersMetaMap[value] = meta
 
-	flag.BoolVar(&aux, meta.Tag, !defaltValue, description)
+	flag.BoolVar(&aux, meta.Tag, defaltValue, description)
 
 	//fmt.Println(tag, defaltValue)
 
